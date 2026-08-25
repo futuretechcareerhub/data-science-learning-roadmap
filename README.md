@@ -6,7 +6,6 @@ Data science combines programming, statistics, data analysis, databases and mach
 
 This repository provides a structured overview of the major areas involved in learning data science.
 
----
 
 ## Data Science Learning Path
 
@@ -25,8 +24,6 @@ A practical learning sequence:
 
 Each stage builds knowledge that can support the next stage.
 
----
-
 ## 1. Understand Data Fundamentals
 
 Start by understanding how data is organised and used.
@@ -42,8 +39,6 @@ Key concepts include:
 - Basic analytical thinking
 
 A strong understanding of data fundamentals makes it easier to learn programming and analytics tools later.
-
----
 
 ## 2. Learn Python for Data Science
 
@@ -67,8 +62,6 @@ Then explore commonly used data science libraries:
 
 The goal is not simply to memorise syntax. Focus on understanding how Python can help solve data-related problems.
 
----
-
 ## 3. Learn SQL and Databases
 
 SQL is an important skill for working with structured data stored in databases.
@@ -88,8 +81,6 @@ SQL is commonly used to retrieve, filter, combine and summarise data.
 
 Python and SQL are often used together in real-world data workflows.
 
----
-
 ## 4. Learn Statistics and Probability
 
 Statistics helps data professionals understand patterns, relationships and uncertainty.
@@ -106,8 +97,6 @@ Important topics include:
 
 You do not need to master advanced mathematics immediately, but understanding statistical fundamentals is valuable for analysing data and evaluating models.
 
----
-
 ## 5. Learn Data Cleaning and Analysis
 
 Real-world datasets are rarely perfect.
@@ -122,8 +111,6 @@ Learn how to:
 - Explore patterns
 
 Data cleaning is an important part of many real-world data projects.
-
----
 
 ## 6. Learn Data Visualisation
 
@@ -141,8 +128,6 @@ The goal is not simply to create attractive charts.
 
 Good visualisation should help people understand trends, comparisons and patterns.
 
----
-
 ## 7. Learn Machine Learning Fundamentals
 
 After developing a foundation in programming, statistics and data analysis, you can explore machine learning.
@@ -158,8 +143,6 @@ Start with:
 - Overfitting and underfitting
 
 Focus on understanding how models work and when they should be used.
-
----
 
 ## 8. Build Real-World Data Science Projects
 
@@ -184,8 +167,6 @@ When building a project, clearly explain:
 5. Key findings
 6. Limitations
 
----
-
 ## Recommended Learning Approach
 
 **Learn → Practice → Build → Analyse → Improve**
@@ -193,8 +174,6 @@ When building a project, clearly explain:
 Avoid trying to learn every data science tool at the same time.
 
 Focus on one stage, practice consistently and gradually work on more complex projects.
-
----
 
 ## Skills Commonly Used in Data Science
 
@@ -213,8 +192,6 @@ Different roles may require different levels of expertise.
 
 For example, a Data Analyst may focus heavily on SQL, analysis and visualisation, while a Data Scientist may work more extensively with programming, statistics and machine learning.
 
----
-
 ## Continue Learning
 
 For learners looking for a more structured path covering data science concepts, practical skills and career-oriented learning, explore:
@@ -223,15 +200,11 @@ For learners looking for a more structured path covering data science concepts, 
 
 The best learning path depends on your current skills, goals and the type of data-related role you want to pursue.
 
----
-
 ## Contributing
 
 Suggestions for improving this learning roadmap are welcome.
 
 You can contribute additional learning resources, project ideas or improvements that make the roadmap more useful for beginners.
-
----
 
 ## Final Note
 
