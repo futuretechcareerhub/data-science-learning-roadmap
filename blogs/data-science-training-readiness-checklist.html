@@ -40,7 +40,7 @@ main{max-width:920px;margin:35px auto;padding:0 20px}
 article{background:#fff;padding:30px;margin-bottom:24px;border-radius:12px}
 h2{color:#111827;margin-top:0}h3{color:#374151}
 a{color:#2563eb}
-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:15px}
+table{width:100%;border-collapse:collapse;margin:20px 0;font-size:15px;table-layout:fixed}thead th:first-child{width:64%}thead th:not(:first-child){width:12%}td.choice{text-align:center;vertical-align:middle}td.choice label{display:flex;align-items:center;justify-content:center;min-height:24px;cursor:pointer}td.choice input{width:18px;height:18px;accent-color:#2563eb;cursor:pointer}table th:first-child,table td:first-child{overflow-wrap:anywhere}
 th,td{border:1px solid #dfe3e8;padding:12px;text-align:left;vertical-align:top}
 th{background:#f3f4f6}
 .note{background:#f8fafc;border-left:4px solid #2563eb;padding:16px 18px;margin:20px 0}
@@ -69,10 +69,10 @@ footer{text-align:center;padding:30px;color:#666}
 <table>
 <thead><tr><th>Self-check</th><th>Can do</th><th>Need practice</th><th>Not started</th></tr></thead>
 <tbody>
-<tr><td>Write a Python script using variables, conditions, loops and functions.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Work with lists, dictionaries, strings and files.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Load a CSV and inspect it using Pandas.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Handle a basic error and explain what caused it.</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Write a Python script using variables, conditions, loops and functions.</td><td class="choice"><label><input type="radio" name="readiness-1" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-1" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-1" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Work with lists, dictionaries, strings and files.</td><td class="choice"><label><input type="radio" name="readiness-2" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-2" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-2" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Load a CSV and inspect it using Pandas.</td><td class="choice"><label><input type="radio" name="readiness-3" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-3" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-3" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Handle a basic error and explain what caused it.</td><td class="choice"><label><input type="radio" name="readiness-4" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-4" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-4" value="not-started" aria-label="Not started"></label></td></tr>
 </tbody>
 </table>
 <p>Evidence to keep: a small Python notebook or script with clear comments and a short README explaining how to run it.</p>
@@ -83,10 +83,10 @@ footer{text-align:center;padding:30px;color:#666}
 <table>
 <thead><tr><th>Self-check</th><th>Can do</th><th>Need practice</th><th>Not started</th></tr></thead>
 <tbody>
-<tr><td>Explain mean, median, standard deviation and when each is useful.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Interpret distributions, percentiles and outliers.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Explain correlation and why it does not by itself prove causation.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Describe a confidence interval or hypothesis test in plain language.</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Explain mean, median, standard deviation and when each is useful.</td><td class="choice"><label><input type="radio" name="readiness-5" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-5" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-5" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Interpret distributions, percentiles and outliers.</td><td class="choice"><label><input type="radio" name="readiness-6" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-6" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-6" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Explain correlation and why it does not by itself prove causation.</td><td class="choice"><label><input type="radio" name="readiness-7" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-7" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-7" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Describe a confidence interval or hypothesis test in plain language.</td><td class="choice"><label><input type="radio" name="readiness-8" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-8" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-8" value="not-started" aria-label="Not started"></label></td></tr>
 </tbody>
 </table>
 <p>If these concepts are unfamiliar, start with descriptive statistics and probability before moving into advanced machine learning. The <a href="data-science-learning-path.html">Data Science Learning Path</a> outlines a foundational sequence.</p>
@@ -97,10 +97,10 @@ footer{text-align:center;padding:30px;color:#666}
 <table>
 <thead><tr><th>Self-check</th><th>Can do</th><th>Need practice</th><th>Not started</th></tr></thead>
 <tbody>
-<tr><td>Filter, sort and aggregate records using SELECT, WHERE and GROUP BY.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Join two tables and explain the join type used.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Use a subquery or a window function for a practical question.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Check whether a query creates duplicate rows or excludes records unexpectedly.</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Filter, sort and aggregate records using SELECT, WHERE and GROUP BY.</td><td class="choice"><label><input type="radio" name="readiness-9" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-9" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-9" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Join two tables and explain the join type used.</td><td class="choice"><label><input type="radio" name="readiness-10" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-10" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-10" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Use a subquery or a window function for a practical question.</td><td class="choice"><label><input type="radio" name="readiness-11" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-11" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-11" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Check whether a query creates duplicate rows or excludes records unexpectedly.</td><td class="choice"><label><input type="radio" name="readiness-12" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-12" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-12" value="not-started" aria-label="Not started"></label></td></tr>
 </tbody>
 </table>
 <p>Evidence to keep: a small set of queries with comments describing the business question each query answers.</p>
@@ -111,10 +111,10 @@ footer{text-align:center;padding:30px;color:#666}
 <table>
 <thead><tr><th>Self-check</th><th>Can do</th><th>Need practice</th><th>Not started</th></tr></thead>
 <tbody>
-<tr><td>Inspect missing values, duplicates, inconsistent categories and data types.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Create useful visualizations and explain the patterns they show.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Separate observations from assumptions and causal claims.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Summarize findings and limitations for a non-technical reader.</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Inspect missing values, duplicates, inconsistent categories and data types.</td><td class="choice"><label><input type="radio" name="readiness-13" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-13" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-13" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Create useful visualizations and explain the patterns they show.</td><td class="choice"><label><input type="radio" name="readiness-14" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-14" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-14" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Separate observations from assumptions and causal claims.</td><td class="choice"><label><input type="radio" name="readiness-15" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-15" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-15" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Summarize findings and limitations for a non-technical reader.</td><td class="choice"><label><input type="radio" name="readiness-16" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-16" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-16" value="not-started" aria-label="Not started"></label></td></tr>
 </tbody>
 </table>
 <p>For project examples and ideas, see <a href="data-science-projects.html">Data Science Projects</a>. Focus on explaining decisions and limitations, not just producing charts.</p>
@@ -125,10 +125,10 @@ footer{text-align:center;padding:30px;color:#666}
 <table>
 <thead><tr><th>Self-check</th><th>Can do</th><th>Need practice</th><th>Not started</th></tr></thead>
 <tbody>
-<tr><td>Distinguish regression, classification and clustering use cases.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Explain train, validation and test data and why leakage matters.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Choose a metric appropriate to the problem and explain the trade-off.</td><td>☐</td><td>☐</td><td>☐</td></tr>
-<tr><td>Compare a simple baseline with a more complex model.</td><td>☐</td><td>☐</td><td>☐</td></tr>
+<tr><td>Distinguish regression, classification and clustering use cases.</td><td class="choice"><label><input type="radio" name="readiness-17" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-17" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-17" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Explain train, validation and test data and why leakage matters.</td><td class="choice"><label><input type="radio" name="readiness-18" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-18" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-18" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Choose a metric appropriate to the problem and explain the trade-off.</td><td class="choice"><label><input type="radio" name="readiness-19" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-19" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-19" value="not-started" aria-label="Not started"></label></td></tr>
+<tr><td>Compare a simple baseline with a more complex model.</td><td class="choice"><label><input type="radio" name="readiness-20" value="can-do" aria-label="Can do"></label></td><td class="choice"><label><input type="radio" name="readiness-20" value="need-practice" aria-label="Need practice"></label></td><td class="choice"><label><input type="radio" name="readiness-20" value="not-started" aria-label="Not started"></label></td></tr>
 </tbody>
 </table>
 <p>Review the <a href="data-science-model-evaluation.html">Model Evaluation Guide</a> if you need to strengthen validation and metrics before building more advanced models.</p>
