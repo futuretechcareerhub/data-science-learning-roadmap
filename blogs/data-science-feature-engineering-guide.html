@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Science Feature Engineering: Practical Techniques with Python</title>
+<meta name="description" content="Learn practical feature engineering for data science with Python examples for missing values, categorical encoding, scaling, date features, feature selection and leakage prevention.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-feature-engineering-guide.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Science Feature Engineering: Practical Techniques with Python">
+<meta property="og:description" content="A hands-on guide to turning raw columns into useful machine learning features, with Python examples and a practical checklist.">
+<meta property="og:url" content="https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-feature-engineering-guide.html">
+<meta property="og:site_name" content="Future Tech Career Hub">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Data Science Feature Engineering: Practical Techniques with Python",
+  "description": "A practical guide to feature engineering for data science, covering missing values, categorical encoding, scaling, date features, feature selection and leakage prevention.",
+  "datePublished": "2026-10-13",
+  "dateModified": "2026-10-13",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-feature-engineering-guide.html"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "Future Tech Career Hub"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Future Tech Career Hub"
+  }
+}
+</script>
+<style>
+body{font-family:Arial,sans-serif;line-height:1.7;margin:0;background:#f5f7fa;color:#202124}
+header{background:#12304a;color:#fff;padding:34px 20px}
+header,main,footer{padding-left:max(20px,calc((100% - 900px)/2));padding-right:max(20px,calc((100% - 900px)/2))}
+h1{line-height:1.25;margin:0 0 12px}main{background:#fff;padding-top:28px;padding-bottom:38px}h2{margin-top:32px;color:#12304a}h3{margin-top:22px}a{color:#0759a5}code{background:#eef2f6;padding:2px 4px;border-radius:3px}pre{overflow-x:auto;background:#f1f4f8;padding:16px;border-radius:8px;line-height:1.5}pre code{background:transparent;padding:0}table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid #d7dde5;padding:9px;text-align:left;vertical-align:top}th{background:#eef2f6}footer{padding-top:18px;padding-bottom:18px;color:#5f6368}
+</style>
+</head>
+<body>
+<header>
+<h1>Data Science Feature Engineering: Practical Techniques with Python</h1>
+<p>Turn raw columns into meaningful model inputs with repeatable, testable feature engineering—not guesswork.</p>
+</header>
+<main>
+<article>
+<p><strong>Published: October 13, 2026</strong></p>
+<p>Machine learning models learn from the features supplied to them. Real datasets, however, rarely arrive ready for modeling: values may be missing, categories may be inconsistent, dates may hide useful patterns, and a single raw field may not express the relationship that matters to the business. <strong>Feature engineering</strong> is the process of transforming raw data into useful model inputs while preserving the meaning and timing of the information.</p>
+<p>Good feature engineering is not about creating as many columns as possible. It is about building features that are valid for the problem, available when a prediction is made, and likely to help a model generalize to new data.</p>
+
+<h2>What Is Feature Engineering?</h2>
+<p>Feature engineering uses domain knowledge and data analysis to prepare or derive input variables for a machine learning model. It can include cleaning values, encoding categories, creating date parts, combining existing fields, scaling numeric variables, and removing redundant or unavailable information.</p>
+<p>For example, an online store may have an order timestamp and a delivery timestamp. For a task that predicts delivery duration at dispatch time, the future delivery timestamp cannot be used as an input. But calendar features derived from the order timestamp—such as order weekday or hour—may be valid and useful.</p>
+
+<h2>Common Feature Engineering Techniques</h2>
+<table>
+<thead><tr><th>Technique</th><th>When it helps</th><th>Example</th><th>Watch out for</th></tr></thead>
+<tbody>
+<tr><td>Missing-value handling</td><td>Some records lack measurements</td><td>Impute a missing income value with a training-set median</td><td>Fit the imputer on training data only</td></tr>
+<tr><td>Categorical encoding</td><td>Inputs contain labels or groups</td><td>One-hot encode payment method</td><td>Handle categories not seen during training</td></tr>
+<tr><td>Scaling</td><td>Features have different numeric ranges</td><td>Scale age and annual spending</td><td>Tree models often need less scaling than distance-based models</td></tr>
+<tr><td>Date and time features</td><td>Timing or seasonality affects the target</td><td>Extract weekday or month from order time</td><td>Use only information available at prediction time</td></tr>
+<tr><td>Domain-derived features</td><td>Ratios or combinations express real behaviour</td><td>Average order value = total spend / order count</td><td>Define zero denominators and time windows</td></tr>
+<tr><td>Feature selection</td><td>Many inputs are noisy or redundant</td><td>Compare validation performance with and without a feature</td><td>Do not select features using the final test set</td></tr>
+</tbody>
+</table>
+
+<h2>Step 1: Understand the Prediction Task First</h2>
+<p>Before transforming columns, write down the target, the unit of prediction, and the moment when the prediction must be made. These choices determine which features are legitimate. For a churn model, for example, define whether the goal is to predict cancellation in the next 30 days and what data is available at the start of that period.</p>
+<ul>
+<li>Identify the target column and the type of problem: classification, regression, ranking or forecasting.</li>
+<li>Check column definitions, data types, missingness, duplicates and unusual values.</li>
+<li>Confirm units and business meaning; a value stored as a number is not automatically meaningful.</li>
+<li>Separate identifiers from predictive inputs unless the identifier carries a justified signal.</li>
+<li>Document when each candidate feature becomes available.</li>
+</ul>
+<p>For dependable input assumptions, pair this review with <a href="data-science-data-contracts-schema-validation.html">data contracts and schema validation</a>.</p>
+
+<h2>Step 2: Build a Reproducible Preprocessing Pipeline</h2>
+<p>Use the training split to learn preprocessing parameters. If you calculate a median, scaling range or category vocabulary from the full dataset before splitting, information from validation or test records can leak into the training process. Scikit-learn pipelines help keep transformations fitted within each training fold and apply the same steps consistently later.</p>
+<p>The example below shows a baseline for a mixed tabular dataset. Replace the sample column names and target with those in your project.</p>
+<pre><code>import pandas as pd
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+df = pd.read_csv("customers.csv")
+target = "churned"
+
+X = df.drop(columns=[target])
+y = df[target]
+
+numeric_features = ["age", "monthly_spend"]
+categorical_features = ["plan_type", "payment_method"]
+
+numeric_pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="median")),
+    ("scaler", StandardScaler()),
+])
+
+categorical_pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("encoder", OneHotEncoder(handle_unknown="ignore")),
+])
+
+preprocessor = ColumnTransformer([
+    ("numeric", numeric_pipeline, numeric_features),
+    ("categorical", categorical_pipeline, categorical_features),
+])
+
+model = Pipeline([
+    ("preprocessing", preprocessor),
+    ("classifier", LogisticRegression(max_iter=1000)),
+])
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+model.fit(X_train, y_train)
+print("Test accuracy:", model.score(X_test, y_test))
+</code></pre>
+<p>This is an illustrative classification baseline, not a universal recipe. Use a split strategy that matches your data: time-ordered splits for future prediction, or group-aware splits when multiple rows belong to the same person, customer or device. Choose metrics that reflect the cost of errors; accuracy alone can be misleading for imbalanced targets.</p>
+
+<h2>Step 3: Create Features That Match Real Behaviour</h2>
+<h3>Date and time</h3>
+<p>From a timestamp, you may derive weekday, hour, month, elapsed time since a known event, or whether a date falls on a weekend. For cyclical values such as hour of day or month, sine/cosine encoding can represent the wrap-around between the end and beginning of a cycle. Do not use future timestamps or information created after the prediction point.</p>
+<h3>Counts, ratios and grouped summaries</h3>
+<p>Features such as orders per month, average basket value, or days since last activity can summarize behaviour more clearly than a raw transaction row. Define the aggregation window carefully and calculate it using only records available at the prediction time. When evaluating a historical prediction, a summary must not include later activity.</p>
+<h3>Text and high-cardinality categories</h3>
+<p>Text fields may need tokenization or vectorization. Categories with many unique values—such as product IDs—can create very wide representations or encourage memorization. Compare a simple baseline with approaches suited to your data volume, and evaluate on a split that reflects how the model will encounter unseen examples.</p>
+
+<h2>Step 4: Select Features With Evidence</h2>
+<p>Start with a sensible baseline and add feature groups one at a time. Track the validation metric, training time, complexity and stability across folds. A feature that improves one split slightly but performs inconsistently may not be worth the maintenance cost.</p>
+<ul>
+<li>Remove columns that are direct copies of the target or are only known after the outcome.</li>
+<li>Investigate duplicate or highly correlated variables when they add complexity without useful signal.</li>
+<li>Use domain knowledge to retain variables that are valid and meaningful, even if their standalone correlation is small.</li>
+<li>Use model-based importance or permutation importance as diagnostic evidence, not proof of causality.</li>
+<li>Perform feature selection inside cross-validation when it learns from target labels.</li>
+</ul>
+<p>After feature changes, compare models with a consistent evaluation protocol. See the guide to <a href="data-science-model-evaluation.html">Data Science Model Evaluation</a> for split strategies, metrics and error analysis.</p>
+
+<h2>Common Feature Engineering Mistakes</h2>
+<h3>Preprocessing before the split</h3>
+<p>Computing imputation values, scaling parameters or target-informed encodings using all records can make validation results look better than real-world performance. Split first, then fit learned transformations inside a pipeline.</p>
+<h3>Target leakage</h3>
+<p>A column can look highly predictive because it was recorded after the event being predicted. Map each feature to the prediction timeline and remove information that would not exist at inference time.</p>
+<h3>Over-engineering</h3>
+<p>Hundreds of untested combinations make pipelines harder to explain and maintain. Prefer a small number of hypotheses, measure their contribution, and keep a feature only when it adds reliable value.</p>
+<h3>Training-serving mismatch</h3>
+<p>If a notebook and a deployed service calculate a feature differently, model quality can degrade even when the model file is unchanged. Reuse the same transformation code and test representative inference inputs.</p>
+<h3>Ignoring changing data</h3>
+<p>Feature distributions and category frequencies can change over time. Monitor missingness, unexpected categories and important feature distributions after deployment, and investigate meaningful changes before retraining automatically.</p>
+
+<h2>Practical Feature Engineering Checklist</h2>
+<ul>
+<li>The target, prediction unit and prediction time are explicitly defined.</li>
+<li>Every feature is available at the moment a prediction is made.</li>
+<li>Missing-value rules, category handling, units and data types are documented.</li>
+<li>Transformations that learn parameters are fitted only on training data.</li>
+<li>Training and inference use the same preprocessing pipeline.</li>
+<li>Feature additions are compared using a consistent validation strategy.</li>
+<li>Final test data is reserved for the final evaluation.</li>
+<li>Important features are monitored for missingness and distribution changes.</li>
+<li>Code, assumptions and feature definitions are version-controlled.</li>
+</ul>
+
+<h2>Conclusion</h2>
+<p>Effective feature engineering combines a clear prediction definition, domain knowledge and disciplined validation. Begin with trustworthy data, establish a leakage-safe baseline pipeline, then add interpretable features in small experiments. Keep transformations reproducible and judge improvements on data that reflects how the model will be used.</p>
+<p>For a structured path through data analysis, machine learning and hands-on projects, explore <a href="https://www.techpratham.com/courses/data-science-certification-training-in-india" rel="noopener">Data Science Training in India</a> from TechPratham.</p>
+<p><strong>Continue reading:</strong> <a href="data-science-workflow.html">Data Science Workflow</a> · <a href="data-science-model-evaluation.html">Data Science Model Evaluation</a> · <a href="index.html">More Data Science Blogs</a> · <a href="../">Data Science Learning Roadmap</a></p>
+</article>
+</main>
+<footer><p>Future Tech Career Hub · Practical data science learning resources</p></footer>
+</body>
+</html>
