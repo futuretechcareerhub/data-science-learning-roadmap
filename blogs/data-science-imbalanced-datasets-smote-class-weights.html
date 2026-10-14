@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handling Imbalanced Datasets in Data Science: SMOTE &amp; Class Weights</title>
+<meta name="description" content="Learn how to handle imbalanced datasets in data science using class weights, random resampling and SMOTE, with leakage-safe Python examples and precision-recall metrics.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-imbalanced-datasets-smote-class-weights.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Handling Imbalanced Datasets in Data Science: SMOTE &amp; Class Weights">
+<meta property="og:description" content="A practical guide to imbalanced classification, precision, recall, class weights, SMOTE and reliable model evaluation with Python.">
+<meta property="og:url" content="https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-imbalanced-datasets-smote-class-weights.html">
+<meta property="og:site_name" content="Future Tech Career Hub">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Handling Imbalanced Datasets in Data Science: SMOTE, Class Weights and Precision-Recall",
+  "description": "A practical guide to handling imbalanced classification with class weights, resampling, SMOTE and appropriate evaluation metrics.",
+  "datePublished": "2026-10-14",
+  "dateModified": "2026-10-14",
+  "mainEntityOfPage": {"@type": "WebPage", "@id": "https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-imbalanced-datasets-smote-class-weights.html"},
+  "author": {"@type": "Organization", "name": "Future Tech Career Hub"},
+  "publisher": {"@type": "Organization", "name": "Future Tech Career Hub"}
+}
+</script>
+<style>
+body{font-family:Arial,sans-serif;line-height:1.7;margin:0;background:#f5f7fa;color:#202124}
+header{background:#12304a;color:#fff;padding:34px 20px}
+header,main,footer{padding-left:max(20px,calc((100% - 900px)/2));padding-right:max(20px,calc((100% - 900px)/2))}
+h1{line-height:1.25;margin:0 0 12px}main{background:#fff;padding-top:28px;padding-bottom:38px}h2{margin-top:32px;color:#12304a}h3{margin-top:22px}a{color:#0759a5}code{background:#eef2f6;padding:2px 4px;border-radius:3px}pre{overflow-x:auto;background:#f1f4f8;padding:16px;border-radius:8px;line-height:1.5}pre code{background:transparent;padding:0}table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid #d7dde5;padding:9px;text-align:left;vertical-align:top}th{background:#eef2f6}footer{padding-top:18px;padding-bottom:18px;color:#5f6368}
+</style>
+</head>
+<body>
+<header>
+<h1>Handling Imbalanced Datasets in Data Science: SMOTE, Class Weights and Precision-Recall</h1>
+<p>Build more reliable classification models when positive cases are rare—and evaluate them with metrics that match the real problem.</p>
+</header>
+<main>
+<article>
+<p><strong>Published: October 14, 2026</strong></p>
+<p>Many real-world classification datasets are imbalanced: most records belong to one class, while the class that matters most is relatively rare. Fraud detection, equipment failure, disease screening, customer churn and security alerts can all have this pattern. A model that predicts the majority class every time may achieve high accuracy while failing to find the cases a team actually needs to detect.</p>
+<p>This guide explains how to diagnose class imbalance, choose a sensible baseline, use class weights or resampling methods such as SMOTE, and evaluate results without data leakage.</p>
+
+<h2>1. What is an imbalanced dataset?</h2>
+<p>A dataset is imbalanced when its target classes have substantially different frequencies. For example, suppose only 1% of transactions are fraudulent. A classifier that labels every transaction as legitimate would be 99% accurate, but its fraud recall would be zero. That is why accuracy alone can hide a poor model.</p>
+<p>Class imbalance is not automatically a problem. It becomes a problem when the model fails to learn useful patterns for the minority class or when the evaluation metric does not reflect the cost of errors. Start by measuring the target distribution and defining the business cost of false positives and false negatives.</p>
+<pre><code>print(y_train.value_counts())
+print(y_train.value_counts(normalize=True).mul(100).round(2))</code></pre>
+
+<h2>2. Choose metrics beyond accuracy</h2>
+<table>
+<thead><tr><th>Metric</th><th>What it tells you</th><th>When it helps</th></tr></thead>
+<tbody>
+<tr><td>Precision</td><td>Of predicted positive cases, how many were truly positive?</td><td>When false alarms are costly.</td></tr>
+<tr><td>Recall</td><td>Of all true positive cases, how many did the model find?</td><td>When missing a positive case is costly.</td></tr>
+<tr><td>F1-score</td><td>Harmonic mean of precision and recall.</td><td>When you need a single balance of both.</td></tr>
+<tr><td>PR-AUC / Average Precision</td><td>Summarizes precision-recall performance across thresholds.</td><td>Often informative when the positive class is rare.</td></tr>
+<tr><td>Confusion matrix</td><td>Counts true positives, false positives, true negatives and false negatives.</td><td>To understand the types of mistakes directly.</td></tr>
+<tr><td>ROC-AUC</td><td>Measures ranking across true-positive and false-positive rates.</td><td>Useful, but read alongside precision-recall results for rare positives.</td></tr>
+</tbody>
+</table>
+<p>Pick metrics before tuning. For example, a fraud team may prioritize recall subject to an acceptable false-positive rate, while a small manual-review team may need higher precision to keep alert volume manageable.</p>
+
+<h2>3. Start with a stratified baseline</h2>
+<p>Split the data before applying any resampling. A stratified split keeps the approximate class ratio in each partition, making evaluation more representative when positives are rare. Keep a final test set untouched until model choices are complete.</p>
+<pre><code>from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, average_precision_score
+from sklearn.linear_model import LogisticRegression
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+baseline = LogisticRegression(max_iter=1000)
+baseline.fit(X_train, y_train)
+
+pred = baseline.predict(X_test)
+scores = baseline.predict_proba(X_test)[:, 1]
+print(classification_report(y_test, pred, zero_division=0))
+print("Average precision:", average_precision_score(y_test, scores))</code></pre>
+<p>Fit any imputation, scaling, encoding or feature-selection steps on training data only. In a real project, place preprocessing inside a scikit-learn pipeline so validation and test records do not influence training transformations.</p>
+
+<h2>4. Method one: use class weights</h2>
+<p>Class weighting increases the penalty for errors on underrepresented classes without creating synthetic rows. It is a strong first experiment because it is simple to implement and keeps the training sample unchanged.</p>
+<pre><code>from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+weighted_model = LogisticRegression(
+    class_weight="balanced",
+    max_iter=1000
+)
+weighted_model.fit(X_train, y_train)
+
+weighted_pred = weighted_model.predict(X_test)
+print(classification_report(y_test, weighted_pred, zero_division=0))</code></pre>
+<p>Many estimators support <code>class_weight</code>, though the available options depend on the algorithm. Weighting can improve minority-class recall, but may also increase false positives. Compare the same metrics and validation protocol against the baseline.</p>
+
+<h2>5. Method two: random oversampling and undersampling</h2>
+<ul>
+<li><strong>Random oversampling</strong> duplicates minority-class training examples. It is easy to test but can encourage overfitting because duplicated examples do not add new information.</li>
+<li><strong>Random undersampling</strong> removes some majority-class examples. It can reduce training time, but may discard useful patterns.</li>
+<li><strong>SMOTE</strong> creates synthetic minority examples by interpolating between nearby minority-class observations. It may help with some numeric datasets, but it is not guaranteed to improve every model.</li>
+</ul>
+<p>Never resample the full dataset before splitting it. Doing so can leak information into evaluation data and make results look better than they are. Resampling belongs inside each training fold, not on validation or test data.</p>
+
+<h2>6. A leakage-safe SMOTE pipeline in Python</h2>
+<p>The <code>imblearn</code> pipeline applies SMOTE during model fitting, so the test set remains untouched. This example assumes the input features are numeric and have already been prepared appropriately. For mixed categorical and numeric data, consider a method designed for that feature structure rather than applying vanilla SMOTE indiscriminately.</p>
+<pre><code>from imblearn.pipeline import Pipeline
+from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, average_precision_score
+
+smote_model = Pipeline([
+    ("scale", StandardScaler()),
+    ("smote", SMOTE(random_state=42)),
+    ("classifier", LogisticRegression(max_iter=1000))
+])
+
+smote_model.fit(X_train, y_train)
+smote_pred = smote_model.predict(X_test)
+smote_scores = smote_model.predict_proba(X_test)[:, 1]
+
+print(classification_report(y_test, smote_pred, zero_division=0))
+print("Average precision:", average_precision_score(y_test, smote_scores))</code></pre>
+<p>Install compatible versions of <code>imbalanced-learn</code> and scikit-learn in your environment before running the example. For cross-validation, run this pipeline within the cross-validation process so every fold resamples only its own training partition.</p>
+
+<h2>7. Tune the decision threshold</h2>
+<p>Many classifiers use 0.5 as the default probability threshold, but that is not always the best operating point. Lowering the threshold often increases recall and the number of false positives; raising it often increases precision while missing more positives. Choose a threshold using validation data and a clear business objective—not by repeatedly checking the test set.</p>
+<pre><code>import numpy as np
+from sklearn.metrics import precision_score, recall_score, f1_score
+
+validation_scores = model.predict_proba(X_valid)[:, 1]
+threshold = 0.30  # Example only; choose using validation results
+validation_pred = (validation_scores >= threshold).astype(int)
+
+print("Precision:", precision_score(y_valid, validation_pred, zero_division=0))
+print("Recall:", recall_score(y_valid, validation_pred, zero_division=0))
+print("F1:", f1_score(y_valid, validation_pred, zero_division=0))</code></pre>
+<p>Probability calibration may also matter when probabilities drive decisions, budgets or risk estimates. Assess calibration separately if the use case requires trustworthy probability values.</p>
+
+<h2>8. Common mistakes to avoid</h2>
+<ul>
+<li>Using accuracy as the only success metric.</li>
+<li>Applying SMOTE or any resampling technique before the train-test split.</li>
+<li>Choosing the model or threshold based on test-set results.</li>
+<li>Assuming SMOTE always beats class weighting or a baseline.</li>
+<li>Ignoring the actual costs of false positives and false negatives.</li>
+<li>Using vanilla SMOTE on categorical or highly structured data without checking whether synthetic examples are meaningful.</li>
+<li>Forgetting that production class prevalence can change over time.</li>
+</ul>
+
+<h2>9. Practical experiment checklist</h2>
+<ul>
+<li>Inspect class counts and class proportions.</li>
+<li>Define the positive class and business cost of each error type.</li>
+<li>Create a stratified split or use a time-aware split when chronology matters.</li>
+<li>Build a baseline and record precision, recall, F1, PR-AUC / average precision and confusion matrix.</li>
+<li>Compare class weights, oversampling and undersampling using the same validation setup.</li>
+<li>Use a pipeline to prevent preprocessing and resampling leakage.</li>
+<li>Select a decision threshold using validation data.</li>
+<li>Evaluate the final selected approach once on the untouched test set.</li>
+<li>Monitor class prevalence, prediction distributions and delayed ground-truth performance after deployment.</li>
+</ul>
+
+<h2>10. How this fits into a data science workflow</h2>
+<p>Imbalanced classification is one part of a larger modeling process. Reliable results also depend on data quality, feature engineering, validation design, model evaluation and production monitoring. You can also read our guides on <a href="data-science-feature-engineering-guide.html">feature engineering with Python</a> and <a href="data-science-model-evaluation.html">model evaluation and validation</a> to build a more complete workflow.</p>
+<p>If you are building your foundations through structured learning, explore <a href="https://www.techpratham.com/courses/data-science-certification-training-in-india" rel="noopener">Data Science Training in India</a> for a related learning path.</p>
+
+<h2>Conclusion</h2>
+<p>There is no single fix for class imbalance. Start with a trustworthy baseline, evaluate minority-class performance, and compare class weights with resampling methods such as SMOTE using leakage-safe pipelines. Choose metrics and thresholds based on the real-world cost of errors, then verify the final model on data that was not used to make decisions.</p>
+</article>
+</main>
+<footer>Future Tech Career Hub · Data Science Learning Roadmap</footer>
+</body>
+</html>
