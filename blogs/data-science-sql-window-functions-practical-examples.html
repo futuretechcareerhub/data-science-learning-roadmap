@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Window Functions for Data Science: 10 Practical Examples | Future Tech Career Hub</title>
+<meta name="description" content="Learn SQL window functions with 10 practical data science examples using ROW_NUMBER, RANK, LAG, running totals, moving averages and partitioned analysis.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-sql-window-functions-practical-examples.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL Window Functions for Data Science: 10 Practical Examples">
+<meta property="og:description" content="Learn SQL window functions with 10 practical data science examples using ROW_NUMBER, RANK, LAG, running totals, moving averages and partitioned analysis.">
+<meta property="og:url" content="https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-sql-window-functions-practical-examples.html">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;line-height:1.75;color:#202938;background:#f5f7fb}header{background:#111827;color:#fff;padding:44px 20px}header .wrap,main,footer{max-width:900px;margin:auto}header p{color:#d1d5db;max-width:760px}main{background:#fff;padding:32px 24px;margin:28px auto;border-radius:14px;box-shadow:0 3px 16px #10182812}h1{line-height:1.2;font-size:clamp(2rem,5vw,2.8rem)}h2{margin-top:2rem;line-height:1.3}h3{margin-top:1.4rem}a{color:#1d4ed8}code,pre{font-family:Consolas,Monaco,monospace}pre{overflow-x:auto;background:#111827;color:#e5e7eb;padding:18px;border-radius:9px;line-height:1.55}.note{background:#eff6ff;border-left:4px solid #2563eb;padding:14px 16px;border-radius:6px}table{border-collapse:collapse;width:100%;display:block;overflow-x:auto}th,td{border:1px solid #d1d5db;padding:9px;text-align:left}footer{text-align:center;color:#6b7280;padding:20px}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"SQL Window Functions for Data Science: 10 Practical Examples","description":"Learn SQL window functions with 10 practical data science examples using ROW_NUMBER, RANK, LAG, running totals, moving averages and partitioned analysis.","mainEntityOfPage":{"@type":"WebPage","@id":"https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-sql-window-functions-practical-examples.html"},"url":"https://futuretechcareerhub.github.io/data-science-learning-roadmap/blogs/data-science-sql-window-functions-practical-examples.html","datePublished":"2026-10-21","dateModified":"2026-10-21","author":{"@type":"Organization","name":"Future Tech Career Hub"},"publisher":{"@type":"Organization","name":"Future Tech Career Hub"}}
+</script>
+</head>
+<body>
+<header><div class="wrap"><p>DATA SCIENCE • SQL • PRACTICAL TUTORIAL</p><h1>SQL Window Functions for Data Science: 10 Practical Examples</h1><p>Use window functions to compare rows, rank results, analyse changes over time and build useful business features without collapsing detail into one row per group.</p><p>Published: October 21, 2026 · Includes query patterns and practical examples</p></div></header>
+<main>
+<p>SQL window functions are valuable in data science because they calculate across related rows while keeping each row visible. Unlike a standard aggregate query that often returns one row per group, a window function can add a group-level statistic, rank or previous-row value to every record in the result.</p>
+<div class="note"><strong>Example setup:</strong> imagine an <code>orders</code> table with <code>customer_id</code>, <code>order_id</code>, <code>order_date</code> and <code>amount</code>. The examples use broadly supported SQL syntax, though date arithmetic and a few details vary by database engine.</div>
+<h2>Window function anatomy</h2>
+<pre><code>function_name(expression) OVER (
+  PARTITION BY group_column
+  ORDER BY sort_column
+  ROWS BETWEEN ... AND ...
+)</code></pre>
+<ul><li><strong>PARTITION BY</strong> divides rows into groups without combining them.</li><li><strong>ORDER BY</strong> defines sequence inside each group.</li><li><strong>Frame clause</strong> specifies which nearby rows an aggregate window should include.</li></ul>
+<p>For repeatable results, use a deterministic ordering. If dates can tie, add a unique key such as <code>order_id</code> as a secondary sort column.</p>
+<h2>1. Number each customer's orders with ROW_NUMBER</h2>
+<p>Use this when you need a unique sequence for each customer—for example, to identify the first order or select one record per group.</p>
+<pre><code>SELECT customer_id, order_id, order_date, amount,
+       ROW_NUMBER() OVER (
+         PARTITION BY customer_id
+         ORDER BY order_date, order_id
+       ) AS order_number
+FROM orders;</code></pre>
+<p>The sequence restarts at 1 for every customer. Unlike <code>RANK()</code>, <code>ROW_NUMBER()</code> assigns a distinct number to every row, including ties.</p>
+<h2>2. Rank top performers with RANK and DENSE_RANK</h2>
+<pre><code>SELECT customer_id, SUM(amount) AS total_spend,
+       RANK() OVER (ORDER BY SUM(amount) DESC) AS spend_rank,
+       DENSE_RANK() OVER (ORDER BY SUM(amount) DESC) AS dense_spend_rank
+FROM orders
+GROUP BY customer_id;</code></pre>
+<p><code>RANK()</code> leaves gaps after tied positions; <code>DENSE_RANK()</code> does not. Use ranking functions for leaderboards, top products and customer segmentation. If you need exactly three rows, ranking ties may return more than three—choose a deterministic <code>ROW_NUMBER()</code> strategy instead.</p>
+<h2>3. Compare a row with the previous value using LAG</h2>
+<p><code>LAG()</code> retrieves a value from an earlier row in the ordered partition. It is useful for repeat purchases, daily metrics and sequential observations.</p>
+<pre><code>SELECT customer_id, order_date, amount,
+       LAG(amount) OVER (
+         PARTITION BY customer_id
+         ORDER BY order_date, order_id
+       ) AS previous_order_amount
+FROM orders;</code></pre>
+<p>The first row for each customer has no previous order, so its result is typically <code>NULL</code>. Decide explicitly how your analysis should treat that missing comparison.</p>
+<h2>4. Compare with the next observation using LEAD</h2>
+<pre><code>SELECT customer_id, order_date, amount,
+       LEAD(order_date) OVER (
+         PARTITION BY customer_id
+         ORDER BY order_date, order_id
+       ) AS next_order_date
+FROM orders;</code></pre>
+<p><code>LEAD()</code> is useful for measuring time between events, identifying the next status or examining what happened after a customer interaction. The last row in each partition normally returns <code>NULL</code>.</p>
+<h2>5. Calculate a running total</h2>
+<pre><code>SELECT order_date, order_id, amount,
+       SUM(amount) OVER (
+         ORDER BY order_date, order_id
+         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+       ) AS running_revenue
+FROM orders;</code></pre>
+<p>The running total accumulates revenue in a defined sequence. The explicit <code>ROWS</code> frame makes row-by-row intent clear. Without a unique ordering, ties may make the sequence ambiguous.</p>
+<h2>6. Create a moving average</h2>
+<pre><code>SELECT order_date, amount,
+       AVG(amount) OVER (
+         ORDER BY order_date, order_id
+         ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+       ) AS moving_avg_7_rows
+FROM orders;</code></pre>
+<p>This calculates an average across the current row and up to six preceding rows. It is a seven-row average, not necessarily a seven-calendar-day average. For daily analytics, aggregate to one row per date first or use a date-based range supported by your database.</p>
+<h2>7. Measure each order's share of customer spend</h2>
+<pre><code>SELECT customer_id, order_id, amount,
+       SUM(amount) OVER (PARTITION BY customer_id) AS customer_total,
+       1.0 * amount / NULLIF(
+         SUM(amount) OVER (PARTITION BY customer_id), 0
+       ) AS share_of_customer_spend
+FROM orders;</code></pre>
+<p>This adds the customer's total spend and each order's proportion to every order row. <code>NULLIF</code> avoids division by zero; the <code>1.0</code> helps encourage decimal division in engines where integer division is a concern.</p>
+<h2>8. Find each customer's first order</h2>
+<pre><code>WITH numbered AS (
+  SELECT customer_id, order_id, order_date, amount,
+         ROW_NUMBER() OVER (
+           PARTITION BY customer_id
+           ORDER BY order_date, order_id
+         ) AS rn
+  FROM orders
+)
+SELECT customer_id, order_id, order_date, amount
+FROM numbered
+WHERE rn = 1;</code></pre>
+<p>Window functions generally cannot be filtered in the same query's <code>WHERE</code> clause because the window result is calculated later in query processing. A CTE or subquery makes the result filterable. Some modern engines also offer <code>QUALIFY</code>.</p>
+<h2>9. Calculate change from the previous order</h2>
+<pre><code>WITH compared AS (
+  SELECT customer_id, order_date, order_id, amount,
+         LAG(amount) OVER (
+           PARTITION BY customer_id
+           ORDER BY order_date, order_id
+         ) AS previous_amount
+  FROM orders
+)
+SELECT customer_id, order_date, amount, previous_amount,
+       amount - previous_amount AS absolute_change,
+       (amount - previous_amount) / NULLIF(previous_amount, 0.0)
+         AS fractional_change
+FROM compared;</code></pre>
+<p>This pattern supports behavioural analysis and feature creation. Treat a zero previous value separately if you need to express percentage change, and confirm that the ordering reflects the business event sequence.</p>
+<h2>10. Compare a product or region with its group average</h2>
+<p>Suppose an aggregated dataset contains one row per product and region. A window average can compare each product with its region's average while preserving product-level detail.</p>
+<pre><code>WITH product_sales AS (
+  SELECT region, product_id, SUM(amount) AS sales
+  FROM orders
+  GROUP BY region, product_id
+)
+SELECT region, product_id, sales,
+       AVG(sales) OVER (PARTITION BY region) AS region_avg_sales,
+       sales - AVG(sales) OVER (PARTITION BY region) AS vs_region_average
+FROM product_sales;</code></pre>
+<p>This is useful for relative performance features and exploratory analysis. Note that the average here weights each product row equally; it is not an average across orders or customers.</p>
+<h2>Common mistakes to avoid</h2>
+<ul><li><strong>Missing or ambiguous ordering:</strong> ranking and lag results may change when ties are not resolved.</li><li><strong>Confusing rows with time:</strong> seven preceding rows do not always mean seven days.</li><li><strong>Filtering too early:</strong> filtering rows before the window runs can change the window's context.</li><li><strong>Mixing grains:</strong> confirm whether each row represents an order, customer, day or product before interpreting a metric.</li><li><strong>Ignoring NULL and zero values:</strong> decide how missing prior observations and zero denominators should be handled.</li><li><strong>Assuming all SQL engines are identical:</strong> check your database's supported functions, frame syntax and date operations.</li></ul>
+<h2>How data scientists use window functions</h2>
+<p>Window functions help create recency and frequency features, customer purchase sequences, month-over-month comparisons, product rankings and rolling statistics. They can reduce complicated self-joins and make analytical logic easier to review. They do not automatically prevent data leakage: when preparing model features, make sure each value uses only information available at prediction time.</p>
+<h2>Practice checklist</h2>
+<ul><li>Write a query that numbers orders per customer.</li><li>Return the top three products per region, deciding how ties should work.</li><li>Calculate each customer's change from the previous order.</li><li>Compare a running total with a grouped total to validate the result.</li><li>Test the query on duplicate timestamps, missing values and zero amounts.</li><li>Document the output grain and the database engine used.</li></ul>
+<h2>Conclusion</h2>
+<p>SQL window functions make row-level analysis more expressive: rank records, inspect sequences, calculate cumulative measures and compare observations with group statistics without losing detail. Learn the partition, ordering and frame rules first, then practise on questions where the result can be checked independently.</p>
+<p>If you want a structured path to strengthen SQL, Python, statistics and machine learning foundations, explore <a href="https://www.techpratham.com/courses/data-science-certification-training-in-india" target="_blank" rel="noopener">Data Science Training in India</a> and compare the curriculum with your learning goals.</p>
+<p><a href="./">← Browse more Data Science blogs</a> · <a href="../">Data Science Learning Roadmap</a></p>
+</main>
+<footer><p>Practical data science learning resources from Future Tech Career Hub.</p></footer>
+</body>
+</html>
